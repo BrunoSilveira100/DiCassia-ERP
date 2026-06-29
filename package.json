@@ -1,0 +1,18 @@
+{
+  "name": "dicassia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de gestão da DiCassia Perfumaria e Acessórios",
+  "main": "src/backend/server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --no-warnings src/backend/server.js",
+    "check": "node --check src/backend/server.js && node --check src/frontend/scripts/app.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  }
+}

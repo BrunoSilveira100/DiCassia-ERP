@@ -1,0 +1,516 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DiCassia — Perfumaria e Acessórios</title>
+  <link rel="icon" type="image/png" href="assets/logo-dicassia.png">
+  <script>
+    document.documentElement.dataset.theme = localStorage.getItem('dicassia-theme') || 'light';
+  </script>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <nav class="nav" id="nav">
+      <button class="new-sale-btn" type="button" data-go-to="nova-venda">
+        <i class="ti ti-plus"></i> Nova Venda
+      </button>
+      <div class="nav-item active" data-page="dashboard">
+        <i class="ti ti-layout-dashboard"></i> Dashboard
+      </div>
+      <div class="nav-item" data-page="vendas">
+        <i class="ti ti-shopping-cart"></i> Vendas
+      </div>
+      <div class="nav-item" data-page="fornecedores">
+        <i class="ti ti-truck"></i> Fornecedores
+      </div>
+      <div class="nav-item" data-page="contas">
+        <i class="ti ti-file-invoice"></i> Contas a Pagar
+      </div>
+      <div class="nav-item" data-page="balancete">
+        <i class="ti ti-scale"></i> Balancete
+      </div>
+      <div class="nav-item" data-page="relatorios">
+        <i class="ti ti-chart-bar"></i> Relatórios
+      </div>
+      <div class="nav-item" data-page="config">
+        <i class="ti ti-settings"></i> Configurações
+      </div>
+    </nav>
+    <div class="nav-bottom">
+      <div class="nav-item logout-item">
+        <i class="ti ti-logout"></i> Sair
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <img class="brand-logo-top" src="assets/logo-dicassia.png" alt="Logo DiCassia Perfumaria e Acessórios">
+        <div class="brand-copy">
+          <strong>DiCassia</strong>
+          <span>perfumaria e acessórios</span>
+        </div>
+        <div class="online-status"><span></span>Loja online</div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-icon" type="button" aria-label="Notificações"><i class="ti ti-bell"></i></button>
+        <button class="topbar-icon theme-toggle" id="theme-toggle" type="button" aria-label="Ativar tema escuro" title="Ativar tema escuro"><i class="ti ti-moon"></i></button>
+        <button class="topbar-icon" type="button" aria-label="Configurações" data-go-to="config"><i class="ti ti-settings"></i></button>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="content">
+
+      <!-- NOVA VENDA -->
+      <div class="page" id="page-nova-venda">
+        <div class="page-title">
+          <div class="icon-big"><i class="ti ti-shopping-bag"></i></div>
+          <h2 id="v-form-title">🌹 NOVA VENDA</h2>
+        </div>
+        <div class="form-card">
+          <div class="form-group">
+            <label>Data</label>
+            <div class="input-wrap">
+              <i class="ti ti-calendar"></i>
+              <input type="date" id="v-data">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cliente</label>
+            <div class="input-wrap">
+              <i class="ti ti-user"></i>
+              <input type="text" id="v-cliente" placeholder="Nome do cliente">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Valor da Venda</label>
+            <div class="input-wrap prefix">
+              <span class="prefix-label">R$</span>
+              <input type="number" id="v-valor" placeholder="0,00" step="0.01" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Forma de Pagamento</label>
+            <div class="input-wrap">
+              <i class="ti ti-credit-card"></i>
+              <select id="v-pagamento">
+                <option value="PIX">PIX</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <div class="input-wrap">
+              <i class="ti ti-circle-check"></i>
+              <select id="v-status">
+                <option>Pago</option>
+                <option>Concluído</option>
+                <option>Pendente</option>
+                <option>A Receber</option>
+                <option>Cancelada</option>
+                <option>Agendada</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Observação <span class="optional">(opcional)</span></label>
+            <div class="input-wrap">
+              <i class="ti ti-notes" style="top:11px;position:absolute"></i>
+              <textarea id="v-obs" placeholder="Digite uma observação..."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-outline btn-cancel-edit" id="v-cancelar" onclick="cancelarEdicaoVenda()" type="button">
+              <i class="ti ti-x"></i> Cancelar
+            </button>
+            <button class="btn-save" id="v-salvar" onclick="salvarVenda()" type="button">
+              <i class="ti ti-device-floppy"></i> SALVAR VENDA
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="dashboard-header">
+          <div>
+            <div class="section-title"><i class="ti ti-layout-dashboard"></i> Dashboard Financeiro</div>
+            <div class="dashboard-period-label" id="dashboard-period-label"></div>
+          </div>
+          <div class="period-tabs" id="dashboard-period-tabs" role="group" aria-label="Período do dashboard">
+            <button type="button" data-period="today">Hoje</button>
+            <button type="button" data-period="yesterday">Ontem</button>
+            <button type="button" data-period="week">Semana</button>
+            <button type="button" class="active" data-period="month">Mês</button>
+            <button type="button" data-period="year">Ano</button>
+            <button type="button" data-period="custom">Personalizado</button>
+          </div>
+        </div>
+        <div class="dashboard-custom-period" id="dashboard-custom-period" hidden>
+          <label>De <input type="date" id="dashboard-start"></label>
+          <label>Até <input type="date" id="dashboard-end"></label>
+          <button type="button" class="btn-add" id="dashboard-apply">Aplicar</button>
+        </div>
+        <div class="dashboard-grid" id="dash-metrics"></div>
+        <div class="dashboard-lower">
+          <article class="dashboard-panel weekly-panel">
+            <div class="panel-heading">
+              <div><i class="ti ti-chart-bar"></i><h3>Vendas por semana</h3></div>
+              <span>Junho 2026</span>
+            </div>
+            <div class="bar-chart" aria-label="Gráfico de vendas por semana">
+              <div class="bar-column"><strong>R$12</strong><div class="bar-track"><span style="--bar-height:55%"></span></div><small>Sem 1</small></div>
+              <div class="bar-column"><strong>R$18</strong><div class="bar-track"><span style="--bar-height:72%"></span></div><small>Sem 2</small></div>
+              <div class="bar-column"><strong>R$8</strong><div class="bar-track"><span style="--bar-height:32%"></span></div><small>Sem 3</small></div>
+              <div class="bar-column"><strong>R$25</strong><div class="bar-track"><span style="--bar-height:100%"></span></div><small>Sem 4</small></div>
+            </div>
+          </article>
+          <article class="dashboard-panel payment-panel">
+            <div class="panel-heading">
+              <div><i class="ti ti-credit-card"></i><h3>Formas de pagamento</h3></div>
+              <span>3 vendas</span>
+            </div>
+            <div class="payment-content">
+              <div class="donut-wrap">
+                <svg class="donut" viewBox="0 0 100 100" role="img" aria-label="Pix 48%, cartão 28%, dinheiro 24%">
+                  <circle class="donut-base" cx="50" cy="50" r="35"></circle>
+                  <circle class="donut-segment pix" cx="50" cy="50" r="35" pathLength="220"></circle>
+                  <circle class="donut-segment card" cx="50" cy="50" r="35" pathLength="220"></circle>
+                  <circle class="donut-segment cash" cx="50" cy="50" r="35" pathLength="220"></circle>
+                </svg>
+                <div class="donut-center"><strong>R$63</strong><span>total</span></div>
+              </div>
+              <div class="payment-legend">
+                <div><span class="legend-dot pix"></span><p>Pix <small>R$ 30 (48%)</small></p></div>
+                <div><span class="legend-dot card"></span><p>Cartão <small>R$ 18 (28%)</small></p></div>
+                <div><span class="legend-dot cash"></span><p>Dinheiro <small>R$ 15 (24%)</small></p></div>
+              </div>
+            </div>
+          </article>
+          <article class="dashboard-panel movement-panel">
+            <div class="panel-heading">
+              <div><i class="ti ti-arrows-exchange"></i><h3>Últimas movimentações</h3></div>
+              <button type="button" data-go-to="vendas">Ver todas <i class="ti ti-arrow-right"></i></button>
+            </div>
+            <div class="movement-list" id="dashboard-movements"></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- VENDAS -->
+      <div class="page" id="page-vendas">
+        <div class="page-header">
+          <div class="section-title" style="margin:0"><i class="ti ti-shopping-bag"></i> Vendas</div>
+        </div>
+        <div class="filters">
+          <input type="date" id="f-data" onchange="renderVendas()">
+          <select id="f-pag" onchange="renderVendas()">
+            <option value="">Todos pagamentos</option>
+            <option>PIX</option>
+            <option>Dinheiro</option>
+            <option>Cartão de Crédito</option>
+            <option>Cartão de Débito</option>
+          </select>
+          <select id="f-venda-status" onchange="renderVendas()">
+            <option value="">Todos status</option>
+            <option>Pago</option>
+            <option>Concluído</option>
+            <option>Pendente</option>
+            <option>A Receber</option>
+            <option>Cancelada</option>
+            <option>Agendada</option>
+          </select>
+          <input type="text" id="f-cli" placeholder="Buscar cliente..." onkeyup="renderVendas()" class="filter-input">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Valor</th>
+                <th>Pagamento</th>
+                <th>Status</th>
+                <th>Obs.</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-vendas"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FORNECEDORES -->
+      <div class="page" id="page-fornecedores">
+        <div class="page-header">
+          <div class="section-title" style="margin:0"><i class="ti ti-truck"></i> Fornecedores</div>
+          <button class="btn-add" onclick="openModal('modal-forn')">
+            <i class="ti ti-plus"></i> Adicionar
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>Produtos</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-forn"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONTAS A PAGAR -->
+      <div class="page" id="page-contas">
+        <div class="page-header">
+          <div class="section-title" style="margin:0"><i class="ti ti-credit-card"></i> Contas a Pagar</div>
+          <button class="btn-add" onclick="openModal('modal-conta')">
+            <i class="ti ti-plus"></i> Adicionar
+          </button>
+        </div>
+        <div class="filters">
+          <select id="f-status" onchange="renderContas()">
+            <option value="">Todos status</option>
+            <option>Pendente</option>
+            <option>Pago</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Vencimento</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-contas"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BALANCETE -->
+      <div class="page" id="page-balancete">
+        <div class="section-title"><i class="ti ti-scale"></i> Balancete</div>
+        <div class="filters" style="margin-bottom:20px">
+          <select id="b-mes">
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7">Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+          </select>
+          <select id="b-ano"></select>
+          <button class="btn-add" onclick="renderBalancete()">
+            <i class="ti ti-refresh"></i> Atualizar
+          </button>
+        </div>
+        <div class="form-card" style="max-width:100%">
+          <div class="balancete-row">
+            <div class="balancete-label">Total de Entradas (Vendas)</div>
+            <div class="balancete-val val-green" id="b-entradas">R$ 0,00</div>
+          </div>
+          <div class="balancete-row">
+            <div class="balancete-label">Total de Saídas (Contas Pagas)</div>
+            <div class="balancete-val val-red" id="b-saidas">R$ 0,00</div>
+          </div>
+          <div class="balancete-row">
+            <div class="balancete-label" style="font-weight:600;font-size:16px">Saldo Líquido</div>
+            <div class="balancete-val val-pink" id="b-saldo" style="font-size:20px">R$ 0,00</div>
+          </div>
+        </div>
+        <div style="margin-top:20px">
+          <div class="section-title"><i class="ti ti-list"></i> Movimentações do período</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Descrição</th>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-bal"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RELATÓRIOS -->
+      <div class="page" id="page-relatorios">
+        <div class="section-title"><i class="ti ti-file-analytics"></i> Relatórios</div>
+        <div class="rel-card">
+          <div class="rel-icon"><i class="ti ti-shopping-bag"></i></div>
+          <div class="rel-info">
+            <h4>Relatório de Vendas</h4>
+            <p>Todas as vendas do período selecionado</p>
+          </div>
+          <button class="btn-outline" onclick="exportVendas()">
+            <i class="ti ti-download"></i> Exportar CSV
+          </button>
+        </div>
+        <div class="rel-card">
+          <div class="rel-icon"><i class="ti ti-credit-card"></i></div>
+          <div class="rel-info">
+            <h4>Contas a Pagar</h4>
+            <p>Lista de despesas e obrigações</p>
+          </div>
+          <button class="btn-outline" onclick="exportContas()">
+            <i class="ti ti-download"></i> Exportar CSV
+          </button>
+        </div>
+        <div class="rel-card">
+          <div class="rel-icon"><i class="ti ti-scale"></i></div>
+          <div class="rel-info">
+            <h4>Balancete Mensal</h4>
+            <p>Entradas x saídas consolidadas</p>
+          </div>
+          <button class="btn-outline" onclick="alert('Acesse a aba Balancete para ver o resumo financeiro.')">
+            <i class="ti ti-eye"></i> Ver Balancete
+          </button>
+        </div>
+      </div>
+
+      <!-- CONFIGURAÇÕES -->
+      <div class="page" id="page-config">
+        <div class="section-title"><i class="ti ti-settings"></i> Configurações</div>
+        <div class="form-card" style="max-width:100%">
+          <div class="cfg-row">
+            <div>
+              <div class="cfg-label">Nome do negócio</div>
+              <div class="cfg-sub">DiCassia Perfumaria e Acessórios</div>
+            </div>
+            <button class="btn-outline">Editar</button>
+          </div>
+          <div class="cfg-row">
+            <div>
+              <div class="cfg-label">Notificações de contas a vencer</div>
+              <div class="cfg-sub">Alertas 3 dias antes do vencimento</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="cfg-row">
+            <div>
+              <div class="cfg-label">Backup automático</div>
+              <div class="cfg-sub">Dados salvos no banco SQLite local</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="cfg-row">
+            <div>
+              <div class="cfg-label">Moeda</div>
+              <div class="cfg-sub">Real Brasileiro (R$)</div>
+            </div>
+            <span style="font-size:13px;color:#aaa">BRL</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- RODAPÉ -->
+    <div class="footer">
+      © 2024 DiCassia Perfumaria e Acessórios. Todos os direitos reservados.
+    </div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL FORNECEDOR -->
+<div class="modal-overlay" id="modal-forn">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-forn')">
+      <i class="ti ti-x"></i>
+    </button>
+    <h3>Novo Fornecedor</h3>
+    <div class="form-group">
+      <label>Nome</label>
+      <div class="input-wrap"><i class="ti ti-building-store"></i><input type="text" id="fn-nome" placeholder="Nome do fornecedor"></div>
+    </div>
+    <div class="form-group">
+      <label>Telefone</label>
+      <div class="input-wrap"><i class="ti ti-phone"></i><input type="text" id="fn-tel" placeholder="(00) 00000-0000"></div>
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <div class="input-wrap"><i class="ti ti-mail"></i><input type="email" id="fn-email" placeholder="email@exemplo.com"></div>
+    </div>
+    <div class="form-group">
+      <label>Produtos fornecidos</label>
+      <div class="input-wrap"><i class="ti ti-package"></i><input type="text" id="fn-prod" placeholder="Ex: perfumes importados"></div>
+    </div>
+    <button class="btn-save" onclick="salvarFornecedor()">
+      <i class="ti ti-device-floppy"></i> Salvar
+    </button>
+  </div>
+</div>
+
+<!-- MODAL CONTA -->
+<div class="modal-overlay" id="modal-conta">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-conta')">
+      <i class="ti ti-x"></i>
+    </button>
+    <h3>Nova Conta a Pagar</h3>
+    <div class="form-group">
+      <label>Descrição</label>
+      <div class="input-wrap"><i class="ti ti-file-text"></i><input type="text" id="ct-desc" placeholder="Ex: Aluguel, fornecedor..."></div>
+    </div>
+    <div class="form-group">
+      <label>Valor</label>
+      <div class="input-wrap"><i class="ti ti-currency-real"></i><input type="number" id="ct-val" placeholder="0,00" step="0.01"></div>
+    </div>
+    <div class="form-group">
+      <label>Vencimento</label>
+      <div class="input-wrap"><i class="ti ti-calendar"></i><input type="date" id="ct-venc"></div>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <div class="input-wrap"><i class="ti ti-check-circle"></i>
+        <select id="ct-status">
+          <option>Pendente</option>
+          <option>Pago</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-save" onclick="salvarConta()">
+      <i class="ti ti-device-floppy"></i> Salvar
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-check-circle"></i>
+  <span id="toast-msg"></span>
+</div>
+
+<script src="scripts/app.js"></script>
+</body>
+</html>

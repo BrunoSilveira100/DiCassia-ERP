@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS vendas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  data TEXT NOT NULL,
+  cliente TEXT NOT NULL,
+  valor REAL NOT NULL CHECK (valor > 0),
+  pagamento TEXT NOT NULL DEFAULT 'PIX',
+  status TEXT NOT NULL DEFAULT 'Pago' CHECK (status IN ('Pago', 'Concluído', 'Pendente', 'A Receber', 'Cancelada', 'Agendada')),
+  obs TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS fornecedores (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT NOT NULL,
+  tel TEXT NOT NULL DEFAULT '',
+  email TEXT NOT NULL DEFAULT '',
+  produtos TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS contas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  desc TEXT NOT NULL,
+  valor REAL NOT NULL CHECK (valor > 0),
+  venc TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'Pendente' CHECK (status IN ('Pendente', 'Pago')),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
