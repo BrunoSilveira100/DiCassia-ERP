@@ -12,6 +12,7 @@
     "node": ">=22.5.0"
   },
   "dependencies": {
+    "better-sqlite3": "^12.11.1",
     "express": "^5.2.1",
     "pg": "^8.22.0",
     "serverless-http": "^3.0.0"

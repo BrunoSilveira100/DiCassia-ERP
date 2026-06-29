@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { DatabaseSync } = require('node:sqlite');
+const DatabaseSync = require('better-sqlite3');
 const paths = require('./paths');
 
 let database;
