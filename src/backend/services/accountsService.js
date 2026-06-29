@@ -2,7 +2,7 @@ const accountsRepository = require('../repositories/accountsRepository');
 const { AppError } = require('../middlewares/errors');
 const { text, positiveMoney, integerId } = require('./validation');
 
-function create(input) {
+async function create(input) {
   const account = {
     desc: text(input.desc),
     valor: positiveMoney(input.valor),
@@ -17,14 +17,15 @@ function create(input) {
   return accountsRepository.create(account);
 }
 
-function toggleStatus(idValue) {
-  const account = accountsRepository.toggleStatus(integerId(idValue));
+async function toggleStatus(idValue) {
+  const account = await accountsRepository.toggleStatus(integerId(idValue));
   if (!account) throw new AppError('Conta não encontrada.', 404);
   return account;
 }
 
-function remove(idValue) {
-  if (!accountsRepository.remove(integerId(idValue))) {
+async function remove(idValue) {
+  const result = await accountsRepository.remove(integerId(idValue));
+  if (!result.changes) {
     throw new AppError('Conta não encontrada.', 404);
   }
 }

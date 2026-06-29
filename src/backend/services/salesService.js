@@ -24,18 +24,19 @@ function normalize(input) {
   return sale;
 }
 
-function create(input) {
+async function create(input) {
   return salesRepository.create(normalize(input));
 }
 
-function update(idValue, input) {
-  const sale = salesRepository.update(integerId(idValue), normalize(input));
+async function update(idValue, input) {
+  const sale = await salesRepository.update(integerId(idValue), normalize(input));
   if (!sale) throw new AppError('Venda não encontrada.', 404);
   return sale;
 }
 
-function remove(idValue) {
-  if (!salesRepository.remove(integerId(idValue))) {
+async function remove(idValue) {
+  const result = await salesRepository.remove(integerId(idValue));
+  if (!result.changes) {
     throw new AppError('Venda não encontrada.', 404);
   }
 }

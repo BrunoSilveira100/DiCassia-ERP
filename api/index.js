@@ -1,6 +1,4 @@
 const serverless = require('serverless-http');
-const { app, getDatabase } = require('../src/backend/server');
-
-getDatabase();
+const app = require('../src/backend/app');
 
 module.exports = serverless(app);

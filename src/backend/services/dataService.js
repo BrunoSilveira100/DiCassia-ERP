@@ -2,11 +2,17 @@ const salesRepository = require('../repositories/salesRepository');
 const suppliersRepository = require('../repositories/suppliersRepository');
 const accountsRepository = require('../repositories/accountsRepository');
 
-function getAll() {
+async function getAll() {
+  const [vendas, fornecedores, contas] = await Promise.all([
+    salesRepository.findAll(),
+    suppliersRepository.findAll(),
+    accountsRepository.findAll()
+  ]);
+
   return {
-    vendas: salesRepository.findAll(),
-    fornecedores: suppliersRepository.findAll(),
-    contas: accountsRepository.findAll()
+    vendas,
+    fornecedores,
+    contas
   };
 }
 

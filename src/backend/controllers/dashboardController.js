@@ -1,7 +1,7 @@
 const dashboardService = require('../services/dashboardService');
 
-function show(req, res) {
-  res.json(dashboardService.getMetrics(req.query));
+async function show(req, res) {
+  res.json(await dashboardService.getMetrics(req.query));
 }
 
 module.exports = { show };

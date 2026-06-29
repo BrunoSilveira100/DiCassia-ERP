@@ -37,9 +37,9 @@ function normalizeRange(query) {
   return { period, start, end, today };
 }
 
-function getMetrics(query) {
+async function getMetrics(query) {
   const range = normalizeRange(query);
-  const metrics = dashboardRepository.getMetrics(range);
+  const metrics = await dashboardRepository.getMetrics(range);
 
   return {
     period: range.period,

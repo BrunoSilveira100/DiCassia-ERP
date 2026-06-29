@@ -1,15 +1,15 @@
 const salesService = require('../services/salesService');
 
-function create(req, res) {
-  res.status(201).json(salesService.create(req.body));
+async function create(req, res) {
+  res.status(201).json(await salesService.create(req.body));
 }
 
-function update(req, res) {
-  res.json(salesService.update(req.params.id, req.body));
+async function update(req, res) {
+  res.json(await salesService.update(req.params.id, req.body));
 }
 
-function remove(req, res) {
-  salesService.remove(req.params.id);
+async function remove(req, res) {
+  await salesService.remove(req.params.id);
   res.json({ ok: true });
 }
 

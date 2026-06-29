@@ -1,7 +1,7 @@
 const dataService = require('../services/dataService');
 
-function index(req, res) {
-  res.json(dataService.getAll());
+async function index(req, res) {
+  res.json(await dataService.getAll());
 }
 
 module.exports = { index };

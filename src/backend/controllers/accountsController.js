@@ -1,15 +1,15 @@
 const accountsService = require('../services/accountsService');
 
-function create(req, res) {
-  res.status(201).json(accountsService.create(req.body));
+async function create(req, res) {
+  res.status(201).json(await accountsService.create(req.body));
 }
 
-function toggleStatus(req, res) {
-  res.json(accountsService.toggleStatus(req.params.id));
+async function toggleStatus(req, res) {
+  res.json(await accountsService.toggleStatus(req.params.id));
 }
 
-function remove(req, res) {
-  accountsService.remove(req.params.id);
+async function remove(req, res) {
+  await accountsService.remove(req.params.id);
   res.json({ ok: true });
 }
 

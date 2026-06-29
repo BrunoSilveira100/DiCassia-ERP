@@ -2,7 +2,7 @@ const suppliersRepository = require('../repositories/suppliersRepository');
 const { AppError } = require('../middlewares/errors');
 const { text, integerId } = require('./validation');
 
-function create(input) {
+async function create(input) {
   const supplier = {
     nome: text(input.nome),
     tel: text(input.tel),
@@ -14,8 +14,9 @@ function create(input) {
   return suppliersRepository.create(supplier);
 }
 
-function remove(idValue) {
-  if (!suppliersRepository.remove(integerId(idValue))) {
+async function remove(idValue) {
+  const result = await suppliersRepository.remove(integerId(idValue));
+  if (!result.changes) {
     throw new AppError('Fornecedor não encontrado.', 404);
   }
 }

@@ -1,11 +1,11 @@
 const suppliersService = require('../services/suppliersService');
 
-function create(req, res) {
-  res.status(201).json(suppliersService.create(req.body));
+async function create(req, res) {
+  res.status(201).json(await suppliersService.create(req.body));
 }
 
-function remove(req, res) {
-  suppliersService.remove(req.params.id);
+async function remove(req, res) {
+  await suppliersService.remove(req.params.id);
   res.json({ ok: true });
 }
 

@@ -1,21 +1,35 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "builds": [
     {
       "src": "api/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "src/frontend/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/api(?:/.*)?",
       "dest": "/api/index.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/styles/(.*)",
+      "dest": "/src/frontend/styles/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/scripts/(.*)",
+      "dest": "/src/frontend/scripts/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/src/frontend/assets/$1"
+    },
+    {
+      "src": "/",
       "dest": "/src/frontend/index.html"
     }
   ]
