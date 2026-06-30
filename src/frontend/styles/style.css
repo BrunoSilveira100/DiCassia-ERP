@@ -1458,3 +1458,57 @@ html[data-theme="dark"] .nav-bottom .nav-item:hover { background: #2c2529; }
 @media (min-width: 1600px) {
   .content { padding-inline: clamp(32px, 5vw, 88px); }
 }
+
+/* ===== Contexto e botão voltar ===== */
+.page-context {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.page-context[hidden] { display: none; }
+.page-context strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.back-button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 22px;
+  transition: color 200ms ease, background-color 200ms ease, transform 150ms ease;
+}
+.back-button:hover { background: var(--pink-light); color: var(--pink); transform: translateX(-2px); }
+.back-button:active { transform: scale(.92); }
+.back-button.clicked { animation: backButtonClick 220ms ease; }
+.back-button:focus-visible {
+  outline: 3px solid rgba(201, 75, 123, .28);
+  outline-offset: 2px;
+}
+body.has-page-back .topbar-brand { display: none; }
+html[data-theme="dark"] .back-button:hover { background: #382832; }
+
+@keyframes backButtonClick {
+  0% { transform: translateX(0) scale(1); }
+  45% { transform: translateX(-5px) scale(.92); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@media (max-width: 767px) {
+  .page-context { gap: 4px; }
+  .page-context strong { font-size: 14px; }
+  .back-button { width: 46px; height: 46px; flex-basis: 46px; }
+  body.has-page-back .topbar-right .topbar-icon:first-child { display: none; }
+}

@@ -26,10 +26,15 @@ function ensurePool() {
     pool = global.__dicassia_pg_pool || new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
-      max: 2,
-      connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 10000
+      max: 1,
+      connectionTimeoutMillis: 4000,
+      idleTimeoutMillis: 10000,
+      query_timeout: 6000
     });
+    if (!global.__dicassia_pg_pool) {
+      pool.on('connect', () => console.log('Banco conectado'));
+      pool.on('error', (error) => console.error('Erro inesperado no pool PostgreSQL:', error));
+    }
     global.__dicassia_pg_pool = pool;
   }
   return pool;

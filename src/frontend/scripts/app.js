@@ -14,7 +14,21 @@ var sidebar = document.getElementById('sidebar');
 var menuToggle = document.getElementById('menu-toggle');
 var sidebarClose = document.getElementById('sidebar-close');
 var sidebarOverlay = document.getElementById('sidebar-overlay');
+var pageContext = document.getElementById('page-context');
+var backButton = document.getElementById('back-button');
+var currentPageTitle = document.getElementById('current-page-title');
 var desktopSidebarQuery = window.matchMedia('(min-width: 1024px)');
+var navigationIndex = 0;
+var pageTitles = {
+  dashboard: 'Dashboard',
+  'nova-venda': 'Nova Venda',
+  vendas: 'Histórico',
+  fornecedores: 'Fornecedores',
+  contas: 'Contas a Pagar',
+  balancete: 'Fluxo de Caixa',
+  relatorios: 'Relatórios',
+  config: 'Configurações'
+};
 
 function setSidebarOpen(open) {
   var shouldOpen = !desktopSidebarQuery.matches && open;
@@ -81,9 +95,23 @@ localStorage.removeItem('dc_contas');
 
 // ---- API ----
 async function api(path, options) {
-  var res = await fetch(path, Object.assign({
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function () { controller.abort(); }, 8000);
+  var requestOptions = Object.assign({
     headers: { 'Content-Type': 'application/json' }
-  }, options || {}));
+  }, options || {}, { signal: controller.signal });
+
+  var res;
+  try {
+    res = await fetch(path, requestOptions);
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('O servidor demorou para responder. Tente novamente.');
+    }
+    throw new Error('Não foi possível conectar ao servidor.');
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   var data = await res.json().catch(function () { return {}; });
   if (!res.ok) {
@@ -121,36 +149,82 @@ function renderPaginaAtual() {
 }
 
 // ---- NAVEGAÇÃO ----
+function setCurrentPageTitle(title) {
+  if (currentPageTitle) currentPageTitle.textContent = title;
+}
+
+function navigateToPage(page, options) {
+  var settings = options || {};
+  var targetPage = document.getElementById('page-' + page);
+  if (!targetPage) {
+    page = 'dashboard';
+    targetPage = document.getElementById('page-dashboard');
+  }
+
+  var previous = document.querySelector('.nav-item.active[data-page]');
+  var previousPage = previous ? previous.dataset.page : null;
+
+  document.querySelectorAll('.nav-item').forEach(function (item) { item.classList.remove('active'); });
+  var navItem = document.querySelector('.nav-item[data-page="' + page + '"]');
+  if (navItem) navItem.classList.add('active');
+
+  document.querySelectorAll('.page').forEach(function (item) { item.classList.remove('active'); });
+  targetPage.classList.add('active');
+
+  var showBack = page !== 'dashboard';
+  document.body.classList.toggle('has-page-back', showBack);
+  if (pageContext) pageContext.hidden = !showBack;
+  setCurrentPageTitle(pageTitles[page] || 'DiCassia');
+
+  if (settings.history !== false && previousPage !== page) {
+    navigationIndex += 1;
+    window.history.pushState(
+      { dicassiaPage: page, dicassiaIndex: navigationIndex },
+      '',
+      page === 'dashboard' ? window.location.pathname + window.location.search : '#' + page
+    );
+  }
+
+  renderPaginaAtual();
+  closeSidebar();
+}
+
 document.querySelectorAll('.nav-item[data-page]').forEach(function (el) {
   el.addEventListener('click', function () {
-    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
-    this.classList.add('active');
-
-    var pg = this.dataset.page;
-    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
-    document.getElementById('page-' + pg).classList.add('active');
-
-    renderPaginaAtual();
-    closeSidebar();
+    navigateToPage(this.dataset.page);
   });
 });
 
 document.querySelectorAll('[data-go-to]').forEach(function (el) {
   el.addEventListener('click', function () {
-    var page = this.dataset.goTo;
-    var navItem = document.querySelector('.nav-item[data-page="' + page + '"]');
-    if (navItem) {
-      navItem.click();
-      return;
-    }
-
-    document.querySelectorAll('.nav-item').forEach(function (item) { item.classList.remove('active'); });
-    document.querySelectorAll('.page').forEach(function (item) { item.classList.remove('active'); });
-    var targetPage = document.getElementById('page-' + page);
-    if (targetPage) targetPage.classList.add('active');
-    closeSidebar();
+    navigateToPage(this.dataset.goTo);
   });
 });
+
+if (backButton) {
+  backButton.addEventListener('click', function () {
+    this.classList.remove('clicked');
+    void this.offsetWidth;
+    this.classList.add('clicked');
+    if (navigationIndex > 0) {
+      window.history.back();
+    } else {
+      navigateToPage('dashboard', { history: false });
+      window.history.replaceState({ dicassiaPage: 'dashboard', dicassiaIndex: 0 }, '', window.location.pathname + window.location.search);
+    }
+  });
+}
+
+window.addEventListener('popstate', function (event) {
+  var state = event.state || {};
+  navigationIndex = Number(state.dicassiaIndex || 0);
+  navigateToPage(state.dicassiaPage || 'dashboard', { history: false });
+});
+
+var initialPage = window.location.hash.slice(1);
+if (!document.getElementById('page-' + initialPage)) initialPage = 'dashboard';
+window.history.replaceState({ dicassiaPage: initialPage, dicassiaIndex: 0 }, '', window.location.href);
+navigateToPage(initialPage, { history: false });
 
 document.querySelectorAll('[data-coming-soon]').forEach(function (el) {
   el.addEventListener('click', function () {
@@ -253,18 +327,32 @@ async function salvarVenda() {
     return;
   }
 
+  var saveButton = document.getElementById('v-salvar');
+  var editando = vendaEmEdicaoId !== null;
+  saveButton.disabled = true;
+  saveButton.innerHTML = '<i class="ti ti-loader-2"></i> SALVANDO...';
+
   try {
-    var editando = vendaEmEdicaoId !== null;
     await api(editando ? '/api/vendas/' + vendaEmEdicaoId : '/api/vendas', {
       method: editando ? 'PUT' : 'POST',
       body: JSON.stringify({ data, cliente, valor, pagamento, status, obs })
     });
 
     limparFormularioVenda();
-    await carregarDados();
     showToast(editando ? 'Venda atualizada com sucesso!' : 'Venda salva com sucesso!');
+
+    try {
+      await carregarDados();
+    } catch (refreshError) {
+      console.error('Venda salva, mas a atualização dos dados falhou:', refreshError);
+    }
   } catch (e) {
     showToast(e.message);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.innerHTML = vendaEmEdicaoId === null
+      ? '<i class="ti ti-device-floppy"></i> SALVAR VENDA'
+      : '<i class="ti ti-device-floppy"></i> SALVAR ALTERAÇÕES';
   }
 }
 
@@ -277,6 +365,9 @@ function limparFormularioVenda() {
   document.getElementById('v-obs').value = '';
   document.getElementById('v-data').value = today;
   document.getElementById('v-form-title').textContent = 'NOVA VENDA';
+  if (document.getElementById('page-nova-venda').classList.contains('active')) {
+    setCurrentPageTitle('Nova Venda');
+  }
   document.getElementById('v-salvar').innerHTML = '<i class="ti ti-device-floppy"></i> SALVAR VENDA';
   document.getElementById('v-cancelar').classList.remove('show');
 }
@@ -299,6 +390,7 @@ function editarVenda(id) {
   document.getElementById('v-salvar').innerHTML = '<i class="ti ti-device-floppy"></i> SALVAR ALTERAÇÕES';
   document.getElementById('v-cancelar').classList.add('show');
   document.querySelector('.new-sale-btn').click();
+  setCurrentPageTitle('Editar Venda');
   document.getElementById('v-cliente').focus();
 }
 

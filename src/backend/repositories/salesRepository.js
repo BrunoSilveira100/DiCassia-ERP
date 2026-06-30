@@ -11,17 +11,24 @@ function findById(id) {
 }
 
 async function create(sale) {
-  const result = await getDatabase()
-    .prepare('INSERT INTO vendas (data, cliente, valor, pagamento, status, obs) VALUES (?, ?, ?, ?, ?, ?)')
-    .run(sale.data, sale.cliente, sale.valor, sale.pagamento, sale.status, sale.obs);
-  return findById(result.lastInsertRowid);
+  return getDatabase()
+    .prepare(`
+      INSERT INTO vendas (data, cliente, valor, pagamento, status, obs)
+      VALUES (?, ?, ?, ?, ?, ?)
+      RETURNING ${fields}
+    `)
+    .get(sale.data, sale.cliente, sale.valor, sale.pagamento, sale.status, sale.obs);
 }
 
 async function update(id, sale) {
-  const result = await getDatabase()
-    .prepare('UPDATE vendas SET data = ?, cliente = ?, valor = ?, pagamento = ?, status = ?, obs = ? WHERE id = ?')
-    .run(sale.data, sale.cliente, sale.valor, sale.pagamento, sale.status, sale.obs, id);
-  return result.changes ? findById(id) : undefined;
+  return getDatabase()
+    .prepare(`
+      UPDATE vendas
+      SET data = ?, cliente = ?, valor = ?, pagamento = ?, status = ?, obs = ?
+      WHERE id = ?
+      RETURNING ${fields}
+    `)
+    .get(sale.data, sale.cliente, sale.valor, sale.pagamento, sale.status, sale.obs, id);
 }
 
 function remove(id) {

@@ -14,6 +14,8 @@ npm start
 3. Na Vercel, crie a variável `DATABASE_URL` para Production e Preview usando essa URL.
 4. Faça o deploy. A raiz serve o frontend e `/api/*` é atendido pela função Express.
 
+> Não use na Vercel a conexão direta `db.PROJECT_REF.supabase.co:5432`. Ela depende de IPv6 e pode causar `FUNCTION_INVOCATION_TIMEOUT`. Para funções serverless, use `aws-REGIAO.pooler.supabase.com:6543`.
+
 O backend acessa o PostgreSQL diretamente; nenhuma chave `service_role` ou secret key deve ser enviada ao frontend.
 
 ## Limitação da Fase 1
