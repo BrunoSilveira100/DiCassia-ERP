@@ -15,44 +15,78 @@
 
 <div class="app" id="app">
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+    <div class="sidebar-header">
+      <img src="assets/logo-dicassia.png" alt="Logo DiCassia">
+      <div>
+        <strong>DiCassia</strong>
+        <span>Gestão da loja</span>
+      </div>
+      <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Fechar menu">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
     <nav class="nav" id="nav">
-      <button class="new-sale-btn" type="button" data-go-to="nova-venda">
+      <button class="new-sale-btn nav-item" type="button" data-page="nova-venda">
         <i class="ti ti-plus"></i> Nova Venda
       </button>
-      <div class="nav-item active" data-page="dashboard">
+      <span class="nav-category">Visão geral</span>
+      <button class="nav-item active" type="button" data-page="dashboard">
         <i class="ti ti-layout-dashboard"></i> Dashboard
-      </div>
-      <div class="nav-item" data-page="vendas">
-        <i class="ti ti-shopping-cart"></i> Vendas
-      </div>
-      <div class="nav-item" data-page="fornecedores">
+      </button>
+      <span class="nav-category">Operações</span>
+      <button class="nav-item" type="button" data-page="vendas">
+        <i class="ti ti-history"></i> Histórico
+      </button>
+      <button class="nav-item" type="button" data-page="fornecedores">
         <i class="ti ti-truck"></i> Fornecedores
-      </div>
-      <div class="nav-item" data-page="contas">
+      </button>
+      <button class="nav-item is-disabled" type="button" data-coming-soon="Clientes">
+        <i class="ti ti-users"></i> Clientes
+      </button>
+      <button class="nav-item is-disabled" type="button" data-coming-soon="Produtos">
+        <i class="ti ti-package"></i> Produtos
+      </button>
+      <button class="nav-item is-disabled" type="button" data-coming-soon="Estoque">
+        <i class="ti ti-box"></i> Estoque
+      </button>
+      <span class="nav-category">Financeiro</span>
+      <button class="nav-item is-disabled" type="button" data-coming-soon="Contas a Receber">
+        <i class="ti ti-cash-banknote"></i> Contas a Receber
+      </button>
+      <button class="nav-item" type="button" data-page="contas">
         <i class="ti ti-file-invoice"></i> Contas a Pagar
-      </div>
-      <div class="nav-item" data-page="balancete">
-        <i class="ti ti-scale"></i> Balancete
-      </div>
-      <div class="nav-item" data-page="relatorios">
+      </button>
+      <button class="nav-item" type="button" data-page="balancete">
+        <i class="ti ti-arrows-exchange"></i> Fluxo de Caixa
+      </button>
+      <button class="nav-item" type="button" data-page="relatorios">
         <i class="ti ti-chart-bar"></i> Relatórios
-      </div>
-      <div class="nav-item" data-page="config">
+      </button>
+      <span class="nav-category">Sistema</span>
+      <button class="nav-item" type="button" data-page="config">
         <i class="ti ti-settings"></i> Configurações
-      </div>
+      </button>
     </nav>
     <div class="nav-bottom">
-      <div class="nav-item logout-item">
-        <i class="ti ti-logout"></i> Sair
+      <div class="sidebar-user">
+        <span class="sidebar-avatar">DC</span>
+        <div><strong>DiCassia</strong><small>Administrador</small></div>
       </div>
+      <button class="nav-item logout-item" type="button">
+        <i class="ti ti-logout"></i> Sair
+      </button>
     </div>
   </aside>
+  <button class="sidebar-overlay" id="sidebar-overlay" type="button" aria-label="Fechar menu" tabindex="-1"></button>
 
   <!-- MAIN -->
   <div class="main">
     <!-- TOPBAR -->
     <div class="topbar">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false">
+        <i class="ti ti-menu-2"></i>
+      </button>
       <div class="topbar-brand">
         <img class="brand-logo-top" src="assets/logo-dicassia.png" alt="Logo DiCassia Perfumaria e Acessórios">
         <div class="brand-copy">

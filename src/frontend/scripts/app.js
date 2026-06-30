@@ -10,6 +10,36 @@ var dashboardData = null;
 var dashboardPeriod = 'month';
 
 var themeToggle = document.getElementById('theme-toggle');
+var sidebar = document.getElementById('sidebar');
+var menuToggle = document.getElementById('menu-toggle');
+var sidebarClose = document.getElementById('sidebar-close');
+var sidebarOverlay = document.getElementById('sidebar-overlay');
+var desktopSidebarQuery = window.matchMedia('(min-width: 1024px)');
+
+function setSidebarOpen(open) {
+  var shouldOpen = !desktopSidebarQuery.matches && open;
+  document.body.classList.toggle('sidebar-open', shouldOpen);
+  if (menuToggle) menuToggle.setAttribute('aria-expanded', String(shouldOpen));
+  if (sidebar) sidebar.setAttribute('aria-hidden', String(!desktopSidebarQuery.matches && !shouldOpen));
+  if (sidebarOverlay) sidebarOverlay.setAttribute('aria-hidden', String(!shouldOpen));
+}
+
+function closeSidebar() {
+  setSidebarOpen(false);
+}
+
+if (menuToggle) {
+  menuToggle.addEventListener('click', function () {
+    setSidebarOpen(!document.body.classList.contains('sidebar-open'));
+  });
+}
+if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+desktopSidebarQuery.addEventListener('change', closeSidebar);
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') closeSidebar();
+});
+setSidebarOpen(false);
 
 function updateThemeButton() {
   if (!themeToggle) return;
@@ -101,6 +131,7 @@ document.querySelectorAll('.nav-item[data-page]').forEach(function (el) {
     document.getElementById('page-' + pg).classList.add('active');
 
     renderPaginaAtual();
+    closeSidebar();
   });
 });
 
@@ -117,8 +148,24 @@ document.querySelectorAll('[data-go-to]').forEach(function (el) {
     document.querySelectorAll('.page').forEach(function (item) { item.classList.remove('active'); });
     var targetPage = document.getElementById('page-' + page);
     if (targetPage) targetPage.classList.add('active');
+    closeSidebar();
   });
 });
+
+document.querySelectorAll('[data-coming-soon]').forEach(function (el) {
+  el.addEventListener('click', function () {
+    showToast(this.dataset.comingSoon + ': módulo em breve.');
+    closeSidebar();
+  });
+});
+
+var logoutItem = document.querySelector('.logout-item');
+if (logoutItem) {
+  logoutItem.addEventListener('click', function () {
+    showToast('Saída disponível após a implementação da autenticação.');
+    closeSidebar();
+  });
+}
 
 var newSaleButton = document.querySelector('.new-sale-btn');
 if (newSaleButton) {
